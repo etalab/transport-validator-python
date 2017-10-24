@@ -10,7 +10,21 @@ Requirements
 Setup
 -----
 
-Make a virtualenv and run `pip install -r requiremnts.txt`
+ * Install virtualenv:
+`pip install --user virtualenvwrapper`
+
+ * Source it:
+`source /usr/local/bin/virtualenvwrapper.sh`
+
+ * Make a virtualenv:
+`mkvirtualenv datavalidator`
+
+ * Install dependencies
+`pip install -r requiremnts.txt`
+
+You might have have to activate the virtualenv with:
+
+`workon datavalidator`
 
 Configuration
 -------------
