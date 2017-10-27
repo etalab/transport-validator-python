@@ -5,7 +5,7 @@ from celery import Celery, states
 
 app = Celery('tasks')
 app.conf.update(BROKER_URL=os.environ['RABBITMQ_URL'],
-                RESULT_BACKEND='db+' + os.environ['MONGODB_URI'])
+                result_backend='db+' + os.environ['MONGODB_URI'])
 
 
 @app.task(bind=True)
