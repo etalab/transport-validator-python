@@ -5,6 +5,9 @@ from celery import Celery, states
 
 app = Celery('tasks')
 app.config_from_object('celeryconfig')
+for envvar in ['CELERY_BROKER', 'CELERY_RESULT_BACKEND', 'CELERY_MONGODB_BACKEND_SETTINGS']:
+    if envvar in os.environ:
+        app.config_from_envvar(envvar)
 
 @app.task(bind=True)
 def perform(self, url):
