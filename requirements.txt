@@ -2,3 +2,4 @@ transitfeed==1.2.14
 requests
 celery
 pymongo
+ipython
