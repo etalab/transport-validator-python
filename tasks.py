@@ -4,7 +4,6 @@ from transport_validator.validator import Accumulator
 from celery import Celery, states
 
 app = Celery('tasks')
-app.config_from_object('celeryconfig')
 for envvar in ['CELERY_BROKER', 'CELERY_RESULT_BACKEND']:
     if envvar in os.environ:
         app.config_from_envvar(envvar)
