@@ -5,9 +5,24 @@ from celery import Celery, states
 
 app = Celery('tasks')
 app.config_from_object('celeryconfig')
-for envvar in ['CELERY_BROKER', 'CELERY_RESULT_BACKEND', 'CELERY_MONGODB_BACKEND_SETTINGS']:
+for envvar in ['CELERY_BROKER', 'CELERY_RESULT_BACKEND']:
     if envvar in os.environ:
         app.config_from_envvar(envvar)
+
+if 'MONGODB_HOST' in os.environ:
+    app.conf['CELERY_MONGODB_BACKEND_SETTINGS']['host'] = os.environ['MONGODB_HOST']
+
+if 'MONGODB_USER' in os.environ:
+    app.conf['CELERY_MONGODB_BACKEND_SETTINGS']['user'] = os.environ['MONGODB_USER']
+
+if 'MONGODB_PASSWORD' in os.environ:
+    app.conf['CELERY_MONGODB_BACKEND_SETTINGS']['password'] = os.environ['MONGODB_PASSWORD']
+
+if 'MONGODB_DATABASE' in os.environ:
+    app.conf['CELERY_MONGODB_BACKEND_SETTINGS']['database'] = os.environ['MONGODB_DATABASE']
+
+if 'MONGODB_PORT' in os.environ:
+    app.conf['CELERY_MONGODB_BACKEND_SETTINGS']['port'] = os.environ['MONGODB_PORT']
 
 @app.task(bind=True)
 def perform(self, url):
