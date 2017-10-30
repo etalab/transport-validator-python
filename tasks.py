@@ -4,9 +4,7 @@ from transport_validator.validator import Accumulator
 from celery import Celery, states
 
 app = Celery('tasks')
-app.conf.update(BROKER_URL=os.environ['RABBITMQ_URL'],
-                result_backend='db+' + os.environ['MONGODB_URI'])
-
+app.config_from_object('celeryconfig')
 
 @app.task(bind=True)
 def perform(self, url):
