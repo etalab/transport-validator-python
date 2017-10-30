@@ -1,2 +1,4 @@
-CELERY_BROKER = 'amqp://localhost'
-CELERY_RESULT_BACKEND = 'mongodb://localhost/celery'
+import os
+
+broker_url = os.environ.get('RABBITMQ_URL', 'amqp://localhost')
+result_backend = os.environ.get('MONGODB_URL', 'mongodb')
