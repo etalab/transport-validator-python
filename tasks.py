@@ -54,6 +54,8 @@ def perform(self, url):
         anomalies = anomalies.add("out_of_date")
     elif "out_of_date" in anomalies:
         anomalies = anomalies.remove("out_of_date")
+    if anomalies is None:
+        anomalies = set()
     app.backend.database['datasets'].find_one_and_update(
         {"celery_task_id": self.request.id},
         {"$set": {"validations": validations,
