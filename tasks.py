@@ -1,4 +1,4 @@
-import requests, tempfile, os, transitfeed
+import requests, tempfile, os, transitfeed, pymongo, datetime
 from io import BytesIO
 from transport_validator.validator import Accumulator
 from celery import Celery, states
@@ -37,8 +37,26 @@ def perform(self, url):
     schedule.Validate(validate_children=False)
     self.update_state(state=states.SUCCESS)
     accumulator = problems.GetAccumulator()
-    return {
-        "validations":
-        {key: [value.GetDictToFormat() for value in getattr(accumulator, key)]
-         for key in ["errors", "warnings", "notices"]}
+    validations = {key: [{"type": str(type(value)), "dict": value.__dict__}
+          for value in getattr(accumulator, key)]
+            for key in ["errors", "warnings", "notices"]
     }
+
+#Get dataset end date
+    end_date = max([v.end_date for v in schedule.service_periods.itervalues()])
+
+    dataset = app.backend.database['datasets'].find_one(
+        {"celery_task_id": self.request.id}
+    )
+
+    anomalies = set(dataset['anomalies'])
+    if end_date < datetime.date.today().strftime("%Y%m%d"):
+        anomalies = anomalies.add("out_of_date")
+    elif "out_of_date" in anomalies:
+        anomalies = anomalies.remove("out_of_date")
+    app.backend.database['datasets'].find_one_and_update(
+        {"celery_task_id": self.request.id},
+        {"$set": {"validations": validations,
+                  "anomalies": list(anomalies)}}
+    )
+    return {"validations": validations}
