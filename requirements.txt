@@ -2,4 +2,4 @@ transitfeed==1.2.14
 requests
 celery
 pymongo
-ipython
+ipython==5.5.0
